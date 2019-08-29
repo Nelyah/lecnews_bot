@@ -51,18 +51,37 @@ def get_web_data():
     list_td_tags = soup.findAll('td')
 
     d_list_teams = {}
-    d_team = {
-        'name': '',
-        'rank': '',
-        'win': '',
-        'loss': ''
-    }
+    d_teams = {}
 
     # There are 4 <td> tags per team
-    
+    i = 0
+    td_regex = r'<td>([^<]*)</td>'
+    for td in list_td_tags:
+        if i == 0:
+            rank = td.text
+            i += 1
+        elif i == 1:
+            names = BeautifulSoup(str(td), 'lxml').findAll('span', class_='standings__team-name')
+            long_name = names[0].text
+            short_name = names[1].text
+            i += 1
+        elif i == 2:
+            win = td.text
+            i += 1
+        elif i == 3:
+            loss = td.text
+            i += 1
 
-    [print(val) for val in team_span_values]
+        if i%4 == 0:
+            d_teams[short_name] = {}
+            d_teams[short_name]['long_name'] = long_name
+            d_teams[short_name]['short_name'] = short_name
+            d_teams[short_name]['rank'] = rank
+            d_teams[short_name]['win'] = win
+            d_teams[short_name]['loss'] = loss
 
+            i = 0
+            
     driver.quit()
 
 
@@ -108,5 +127,5 @@ def main():
     
 
 if __name__ == '__main__':
-    main()
+    # main()
     get_web_data()
