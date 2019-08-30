@@ -158,17 +158,6 @@ def get_schedule():
     return t_event
 
 
-def get_url():
-    contents = requests.get('https://random.dog/woof.json').json()    
-    url = contents['url']
-    return url
-
-def bop(bot, context):
-    url = get_url()
-    chat_id = context.message.chat_id
-    bot.send_photo(chat_id=chat_id, photo=url)
-
-
 def start(bot, context):
     bot.send_message(chat_id=context.message.chat_id, text="I'm a bot, please talk to me!")
 
