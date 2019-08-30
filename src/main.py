@@ -27,12 +27,12 @@ def extract_td_team_info(d_teams, list_td_tags):
 
 
 def startup_browser():
-    """Starts a browser using Selenium and returns a driver.
+    """Starts a browser using Selenium and returns a browser.
     TODO: connects to an existing browser if available
-    :returns: browser driver
+    :returns: browser browser
 
     """
-    logging.log(logging.INFO, 'Starting firefox headless browser...')
+    logging.log(logging.INFO, 'Starting headless browser...')
 
 
     firefox_options = Options()
