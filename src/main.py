@@ -43,10 +43,11 @@ def startup_browser():
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--incognito')
 
-    # driver = webdriver.Firefox(options=firefox_options)
-    driver = webdriver.Chrome(options=chrome_options)
-    return driver
+    # browser = webdriver.Firefox(options=firefox_options)
+    browser = webdriver.Chrome(port=9515, options=chrome_options)
+    browser.implicitly_wait(30)
 
+    return browser
 
 def get_web_data():
     url = 'https://eu.lolesports.com/en/league/lec'
@@ -55,7 +56,6 @@ def get_web_data():
     url = 'https://watch.lolesports.com/standings/lec/lec_2019_summer/regular_season'
 
     driver = startup_browser()
-    driver.implicitly_wait(15)
 
     logging.log(logging.INFO, f'Getting url: {url}')
     driver.get(url)
