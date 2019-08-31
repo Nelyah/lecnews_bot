@@ -15,6 +15,11 @@ import re
 import logging
 
 
+# Global variable so the functions can access a single browser instance.
+# There's probably a nicer way to do this with webdriver.Remote
+browser_driver = None
+
+
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
 
@@ -46,6 +51,7 @@ def startup_browser():
     # browser = webdriver.Firefox(options=firefox_options)
     browser = webdriver.Chrome(port=9515, options=chrome_options)
     browser.implicitly_wait(30)
+    logging.log(logging.INFO, 'Done.')
 
     return browser
 
@@ -55,8 +61,6 @@ def get_regular_season_standings(browser_driver):
     url = 'https://watch.lolesports.com/vods/lec/lec_2019_summer'
     url = 'https://watch.lolesports.com/standings'
     url = 'https://watch.lolesports.com/standings/lec/lec_2019_summer/regular_season'
-
-    browser_driver = startup_browser()
 
     logging.log(logging.INFO, f'Getting url: {url}')
     browser_driver.get(url)
@@ -96,8 +100,6 @@ def get_schedule():
 
     """
     url = 'https://watch.lolesports.com/schedule?leagues=lec'
-
-    browser_driver = startup_browser()
 
     logging.log(logging.INFO, f'Getting url: {url}')
     browser_driver.get(url)
@@ -175,7 +177,6 @@ def bot_get_rankings(bot, context):
 
     """
     # Connect to existing browser
-    browser_driver = startup_browser()
     t_team_data = get_regular_season_standings(browser_driver)
 
     msg = ''
@@ -200,8 +201,6 @@ def startup_bot():
 
 
 def main():
-    browser_driver = startup_browser()
-
     updater = startup_bot()
 
     dp = updater.dispatcher
@@ -218,4 +217,6 @@ def main():
     
 
 if __name__ == '__main__':
+    browser_driver = startup_browser()
+    # get_schedule()
     main()
