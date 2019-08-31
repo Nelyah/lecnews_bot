@@ -204,7 +204,6 @@ def main():
     updater = startup_bot()
 
     dp = updater.dispatcher
-    dp.add_handler(CommandHandler('bop',bop))
     dp.add_handler(CommandHandler('standings', bot_get_rankings))
     dp.add_handler(MessageHandler(Filters.text | Filters.photo, echo))
 
