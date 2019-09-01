@@ -22,7 +22,7 @@ browser_driver = None
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                     level=logging.INFO)
+                    level=logging.INFO)
 
 
 def extract_td_team_info(d_teams, list_td_tags):
@@ -39,7 +39,6 @@ def startup_browser():
 
     """
     logging.log(logging.INFO, 'Starting headless browser...')
-
 
     firefox_options = Options()
     firefox_options.add_argument('--headless')
@@ -83,7 +82,7 @@ def get_regular_season_standings(browser_driver):
         soup = BeautifulSoup(str(team_data), 'lxml')
         d_team['name'] = soup.find(class_='name').text
         d_team['rank'] = soup.find(class_='ordinal').text
-        record  = soup.find(class_='record').text
+        record = soup.find(class_='record').text
         record = re.findall(r'([0-9]+)W-([0-9]+)L', record)[0]
         win, loss = record[0], record[1]
 
@@ -169,22 +168,24 @@ def get_schedule(browser_driver):
 
 
 def start(bot, context):
-    bot.send_message(chat_id=context.message.chat_id, text="I'm a bot, please talk to me!")
+    bot.send_message(chat_id=context.message.chat_id,
+                     text="I'm a bot, please talk to me!")
 
 
 def echo(bot, context):
-    bot.send_message(chat_id=context.message.chat_id, text="I didn't quite get that, sorry.")
+    bot.send_message(chat_id=context.message.chat_id,
+                     text="I didn't quite get that, sorry.")
 
 
 def audio(bot, context):
-    bot.send_message(chat_id=context.message.chat_id, text="No use sending me audio...")
+    bot.send_message(chat_id=context.message.chat_id,
+                     text="No use sending me audio...")
 
 
 def bot_get_rankings(bot, context):
     """Scrape website for ranking data and print a nicely formatted output.
 
     """
-    # Connect to existing browser
     t_team_data = get_regular_season_standings(browser_driver)
 
     msg = ''
@@ -265,7 +266,7 @@ def main():
     updater.idle()
 
     browser_driver.quit()
-    
+
 
 if __name__ == '__main__':
     browser_driver = startup_browser()
