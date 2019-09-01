@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from os import path
 from time import sleep
 
+import datetime
 import configparser
 import time
 import requests
@@ -193,6 +194,49 @@ def bot_get_rankings(bot, context):
     bot.send_message(chat_id=context.message.chat_id, text=msg)
 
 
+def bot_get_schedule(bot, context):
+    """TODO: Docstring for bot_get_schedule.
+
+    :bot: TODO
+    :context: TODO
+    :returns: TODO
+
+    """
+    t_schedule_data = get_schedule(browser_driver)
+
+    date_today = datetime.datetime.today()
+    date_twoweeks_ahead = date_today + datetime.timedelta(14)
+    date_today.year
+
+    msg             = ''
+    last_date_event = None
+    msg_date        = None
+    for event_data in t_schedule_data:
+        if event_data['live'] is False:
+            human_event_date = f"{event_data['monthday']} {date_today.year}"
+
+            date_event = datetime.datetime.strptime(
+                human_event_date,
+                '%B %d %Y'
+            )
+
+            if last_date_event is None or last_date_event != date_event:
+                if msg_date is not None: 
+                    msg_date = '\n\n'
+                else:
+                    msg_date = ''
+                msg_date = f"{msg_date}{human_event_date}:\n"
+                last_date_event = date_event
+            else:
+                msg_date = ''
+            if date_event > date_today and date_event < date_twoweeks_ahead:
+                msg += f"{msg_date}{event_data['hour']}:{event_data['minute']}{event_data['ampm']}: {event_data['team1']} - {event_data['team2']}\n"
+
+            # msg += f"{team_data['rank']} - {team_data['name']}: {team_data['win']}W-{team_data['loss']}L\n"
+
+    bot.send_message(chat_id=context.message.chat_id, text=msg)
+
+
 def startup_bot():
     """Startup function for the Telegram Bot
     :returns: Updater object
@@ -212,6 +256,7 @@ def main():
 
     dp = updater.dispatcher
     dp.add_handler(CommandHandler('standings', bot_get_rankings))
+    dp.add_handler(CommandHandler('schedule', bot_get_schedule))
     dp.add_handler(MessageHandler(Filters.text | Filters.photo, echo))
 
     updater.start_polling()
