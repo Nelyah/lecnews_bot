@@ -93,7 +93,8 @@ def get_regular_season_standings(browser_driver):
 
     return t_team_dict
 
-def get_schedule():
+
+def get_schedule(browser_driver):
     """Get schedule from LEC league.
 
     :returns: list of dictionary (one per match)
@@ -118,44 +119,50 @@ def get_schedule():
     # Getting interesting parts into a list
     soup = BeautifulSoup(page_source, 'lxml')
     t_data = soup.findAll('div', {'class': ['EventDate', 'EventMatch']})
-    
-    t_event  = []
-    weekday  = None
+
+    t_event = []
+    weekday = None
     monthday = None
 
     # Iterate over list and fill up a dictionary each time
     for div in t_data:
-        d_event = {}
         if 'EventDate' in div.attrs['class']:
-            weekday  = div.find(class_ = 'weekday').text
-            monthday = div.find(class_ = 'monthday').text
+            weekday = div.find(class_='weekday').text
+            monthday = div.find(class_='monthday').text
         elif 'EventMatch' in div.attrs['class']:
-            d_event['weekday']  = weekday
-            d_event['monthday'] = monthday
-
-            d_event['hour']   = div.find(class_='hour').text
-            d_event['ampm']   = div.find(class_='ampm').text
-
-            minute = div.find(class_='minute')
-            if minute is not None:
-                minute = minute.text
+            d_event = {}
+            if div.find(class_='live') is not None:
+                d_event['live'] = True
             else:
-                minute = '00'
+                d_event['live'] = False
+                d_event['weekday'] = weekday
+                d_event['monthday'] = monthday
+                d_event['hour'] = div.find(class_='hour').text
+                d_event['ampm'] = div.find(class_='ampm').text
+
+                minute = div.find(class_='minute')
+
+                if minute is not None:
+                    minute = minute.text
+                else:
+                    minute = '00'
             d_event['minute'] = minute
 
-            d_event['team1'] = div.find(class_='team1').find(class_='name').text
+            d_event['team1'] = div.find(
+                class_='team1').find(class_='name').text
             score_team1 = div.find(class_='scoreTeam1')
             if score_team1 is not None:
                 score_team1 = score_team1.text
             d_event['score_team1'] = score_team1
 
-            d_event['team2'] = div.find(class_='team2').find(class_='name').text
+            d_event['team2'] = div.find(
+                class_='team2').find(class_='name').text
             score_team2 = div.find(class_='scoreTeam2')
             if score_team2 is not None:
                 score_team2 = score_team2.text
             d_event['score_team1'] = score_team2
 
-        t_event.append(d_event)
+            t_event.append(d_event)
 
     return t_event
 
